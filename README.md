@@ -1,10 +1,11 @@
-# Blarg CSS
+Blarg CSS
+--------------
 
 Converts HTML with inline style-attributes to HTML and CSS
 
-# Example
+## Example
 
-## HTML input:
+### HTML input:
 <div style="float: left; margin: 10px; text-align: center;">
     <p style="margin: 10px; text-align: center;">paragraph 1</p>
     <p style="text-align: center;">paragraph 2</p>
@@ -16,13 +17,13 @@ Converts HTML with inline style-attributes to HTML and CSS
     <p style="text-align: center; float: left; margin: 10px;">paragraph 3</p>
 </div>
 
-## Generated CSS:
+### Generated CSS:
 .b6{text-align:center}
 .b9{float:left}
 .b10{margin:10px}
 .b12{padding:10px}
 
-## Generated HTML:
+### Generated HTML:
 <div class="b6 b9 b10">
     <p class="b6 b10">paragraph 1</p>
     <p class="b6">paragraph 2</p>
@@ -34,6 +35,6 @@ Converts HTML with inline style-attributes to HTML and CSS
     <p class="b6 b9 b10">paragraph 3</p>
 </div>
 
-# Minify
+## Minify
 
 Uses the CSS compressor class from Minify: http://code.google.com/p/minify/
