@@ -38,6 +38,13 @@ Converts HTML with inline style-attributes to HTML and CSS
         <p class="b6 b9 b10">paragraph 3</p>
     </div>
 
+## Todo
+
+* Group properties in pairs and triples
+* Detect superfluous properties by keeping track of inheritance.
+* Turn into a Bundle (Symfony2 style)
+* Hook into the Symfony2 templating system somehow (or maybe just Twig?)
+
 ## Minify
 
 Uses the CSS compressor class from Minify: http://code.google.com/p/minify/
