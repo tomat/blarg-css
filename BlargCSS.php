@@ -66,7 +66,7 @@ class BlargCSS
                     $cssClass = $this->cssClassCounter;
                     $parsedCSS = str_replace($this->cssBlockClass, $this->cssClassPrefixDot . $cssClass, $parsedCSS);
                     /**
-                     * Finds the properties-part of the class declaration produced by 
+                     * Finds the properties-part of the class declaration produced by Minify_CSS_Compressor.
                      */
                     preg_match("#\{(.+?);?\}#", $parsedCSS, $parsedPropertiesStr);
                     $parsedProperties = explode(";", $parsedPropertiesStr[1]);
@@ -94,6 +94,10 @@ class BlargCSS
                     $this->cssProperties[$propertyHash]['codeBlocks'][$codeHash] = & $this->sources[$codeHash];
                     $this->cssProperties[$propertyHash]['styleBlocks'][$cssHash] = & $this->styleBlocks[$cssHash];
 
+                    /**
+                     * Keep track of how many times each property/value is used,
+                     * store each property in $this->cssSortedProperties[<count>]
+                     */
                     $countNow = $this->cssProperties[$propertyHash]['count'];
                     $countBefore = $countNow - 1;
                     
