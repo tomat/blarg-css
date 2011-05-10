@@ -44,6 +44,7 @@ Converts HTML with inline style-attributes to HTML and CSS
 * Detect superfluous properties by keeping track of inheritance.
 * Turn into a Bundle (Symfony2 style)
 * Hook into the Symfony2 templating system somehow (or maybe just Twig?)
+* Convert HTML/CSS to HTML with inline styles
 
 ## Minify
 
