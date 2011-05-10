@@ -51,10 +51,15 @@ class BlargCSS
         foreach ($this->sources as $codeHash => $code)
         {
             /**
+             * Strip class-declarations from source
+             */
+            $code = preg_replace("#(<[^ ]+?[^>]*)(?P<classDeclaration>class=\".+?\")([^>]*>)#i", "$1$3", $code);
+
+            /**
              * Finds style="*" inside HTML tags (not safe in any way)
              * @todo use xml parser
              */
-            preg_match_all("#<[^ ]+?[^>]*(?P<styleAttribute>style=\"(?P<styleBlock>.+?)\")[^>]*>#i", $code, $styleAttributes, PREG_SET_ORDER);
+            preg_match_all("#<(?P<tag>[^/][^ ]*?) [^>]*?(?P<styleAttribute>style=\"(?P<styleBlock>.+?)\")[^>]*>#is", $code, $styleAttributes, PREG_SET_ORDER);
             foreach ($styleAttributes as $styleAttributes)
             {
                 $styleBlockWithClass = $this->cssBlockPrefix . $styleAttributes["styleBlock"] . $this->cssBlockSuffix;
@@ -65,10 +70,12 @@ class BlargCSS
                 {
                     $cssClass = $this->cssClassCounter;
                     $parsedCSS = str_replace($this->cssBlockClass, $this->cssClassPrefixDot . $cssClass, $parsedCSS);
+
                     /**
                      * Finds the properties-part of the class declaration produced by Minify_CSS_Compressor.
                      */
-                    preg_match("#\{(.+?);?\}#", $parsedCSS, $parsedPropertiesStr);
+                    preg_match("#\{(.+?);?\}#s", $parsedCSS, $parsedPropertiesStr);
+
                     $parsedProperties = explode(";", $parsedPropertiesStr[1]);
                     $this->styleBlocks[$cssHash] = array(
                         'css' => $parsedCSS,
@@ -120,6 +127,7 @@ class BlargCSS
         /**
          * Loop through sorted CSS properties and assign new classes.
          */
+        $this->cssClassCounter = 0;
         krsort($this->cssSortedProperties, SORT_NUMERIC);
         foreach ($this->cssSortedProperties as $count => $properties)
         {
@@ -135,9 +143,10 @@ class BlargCSS
                     }
                     $this->styleBlocks[$cssHash]['newClass'] .= $this->cssClassPrefix . $this->cssClassCounter . " ";
                 }
+
+                $this->cssClassCounter++;
             }
 
-            $this->cssClassCounter++;
         }
 
         /**
