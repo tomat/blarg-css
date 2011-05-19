@@ -54,6 +54,7 @@ class BlargCSS
              * Strip class-declarations from source
              */
             $code = preg_replace("#(<[^ ]+?[^>]*)(?P<classDeclaration>class=\".+?\")([^>]*>)#i", "$1$3", $code);
+            $code = preg_replace("#(<[^ ]+?[^>]*)(?P<idDeclaration>id=\".+?\")([^>]*>)#i", "$1$3", $code);
 
             /**
              * Finds style="*" inside HTML tags (not safe in any way)
@@ -77,11 +78,53 @@ class BlargCSS
                     preg_match("#\{(.+?);?\}#s", $parsedCSS, $parsedPropertiesStr);
 
                     $parsedProperties = explode(";", $parsedPropertiesStr[1]);
+
+                    /**
+                     * Check for superfluous background/border/padding/margin properties
+                     */
+                    $parsedPropertiesReverse = array_reverse($parsedProperties, true);
+                    $background_found = false;
+                    $border_found = false;
+                    $padding_found = false;
+                    $margin_found = false;
+                    foreach($parsedPropertiesReverse as $key => $property)
+                    {
+                        if (!$background_found && strpos($property, "background:") === 0)
+                        {
+                            $background_found = true;
+                        }
+                        elseif (!$border_found && strpos($property, "border:") === 0)
+                        {
+                            $border_found = true;
+                        }
+                        elseif (!$padding_found && strpos($property, "padding:") === 0)
+                        {
+                            $padding_found = true;
+                        }
+                        elseif (!$margin_found && strpos($property, "margin:") === 0)
+                        {
+                            $margin_found = true;
+                        }
+                        elseif ($background_found && strpos($property, "background") === 0
+                                || $border_found && strpos($property, "border-width") === 0
+                                || $border_found && strpos($property, "border-color") === 0
+                                || $border_found && strpos($property, "border-top") === 0
+                                || $border_found && strpos($property, "border-bottom") === 0
+                                || $border_found && strpos($property, "border-left") === 0
+                                || $border_found && strpos($property, "border-right") === 0
+                                || $padding_found && strpos($property, "padding") === 0
+                                || $margin_found && strpos($property, "margin") === 0)
+                        {
+                            unset($parsedProperties[$key]);
+                        }
+                    }
+
                     $this->styleBlocks[$cssHash] = array(
                         'css' => $parsedCSS,
                         'class' => $cssClass,
                         'properties' => $parsedProperties,
                     );
+
                     $this->cssClassCounter++;
                 }
 
@@ -104,24 +147,35 @@ class BlargCSS
                     /**
                      * Keep track of how many times each property/value is used,
                      * store each property in $this->cssSortedProperties[<count>]
+                     *
+                     * Prioritize background:/border:/padding:/margin:
                      */
-                    $countNow = $this->cssProperties[$propertyHash]['count'];
-                    $countBefore = $countNow - 1;
-                    
+                    if(strpos($cssProperty,"background:") === 0
+                        || strpos($cssProperty,"border:") === 0
+                        || strpos($cssProperty,"padding:") === 0
+                        || strpos($cssProperty,"margin:") === 0)
+                    {
+                        $countNow = 1000000;
+                        $countBefore = 0;
+                    }
+                    else
+                    {
+                        $countNow = $this->cssProperties[$propertyHash]['count'];
+                        $countBefore = $countNow - 1;
+                    }
+
                     if($countBefore > 0)
                     {
                         unset($this->cssSortedProperties[$countBefore][$propertyHash]);
                     }
 
                     $this->cssSortedProperties[$countNow][$propertyHash] = & $this->cssProperties[$propertyHash];
-
                 }
 
                 $code = str_replace($styleAttributes["styleAttribute"], 'class="{{ blargClass("'.$cssHash.'") }}"', $code);
             }
 
             $this->sourcesStripped[$codeHash] = $code;
-            
         }
 
         /**
@@ -146,7 +200,6 @@ class BlargCSS
 
                 $this->cssClassCounter++;
             }
-
         }
 
         /**
@@ -172,5 +225,4 @@ class BlargCSS
             }
         }
     }
-
 }
