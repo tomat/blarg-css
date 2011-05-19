@@ -48,4 +48,15 @@ Converts HTML with inline style-attributes to HTML and CSS
 
 ## Minify
 
-Uses the CSS compressor class from Minify: http://code.google.com/p/minify/
+Uses the CSS compressor class from Minify, by Stephen Clay: http://code.google.com/p/minify/
+Based on version 2.1.3
+
+## CSS to Inline Styles
+
+Uses a modified version of the CSS to Inline Styles class by Tijs Verkoyen: http://classes.verkoyen.eu/css_to_inline_styles
+Based on version 1.0.3
+
+## PHP Simple HTML DOM Parser
+
+Uses a modified version of the PHP Simple HTML DOM Parser by S.C. Chen: http://sourceforge.net/projects/simplehtmldom/
+Based on version 1.11
