@@ -3,6 +3,12 @@ Blarg CSS
 
 Converts HTML with inline style-attributes to HTML and CSS
 
+## Random thoughts
+
+Best practice tells us to refactor early, and refactor often, especially in regards to CSS. But more often than not, we don't. Our CSS files grow out of control as we add new rules, overriding the old ones. Even if we did refactor with every addition, this is time consuming, and things break way too easily.
+ 
+The CSS optimization process should be (almost) fully automated. With the right algorithm, we may end up with dramatically smaller stylesheets, and a lot of time saved.
+
 ## Example
 
 ### HTML input:
@@ -20,28 +26,33 @@ Converts HTML with inline style-attributes to HTML and CSS
 
 ### Generated CSS:
 
-    .b6{text-align:center}
-    .b9{float:left}
-    .b10{margin:10px}
-    .b12{padding:10px}
+    .b0{margin:10px}
+    .b1{padding:10px}
+    .b2{text-align:center}
+    .b3{float:left}
 
 ### Generated HTML:
 
-    <div class="b6 b9 b10">
-        <p class="b6 b10">paragraph 1</p>
-        <p class="b6">paragraph 2</p>
-        <p class="b6 b9">paragraph 3</p>
+    <div class="b0 b2 b3">
+        <p class="b0 b2">paragraph 1</p>
+        <p class="b2">paragraph 2</p>
+        <p class="b2 b3">paragraph 3</p>
     </div>
-    <div class="b9 b12">
-        <p class="b6">paragraph 1</p>
-        <p class="b6">paragraph 2</p>
-        <p class="b6 b9 b10">paragraph 3</p>
+
+    <div class="b1 b3">
+        <p class="b2">paragraph 1</p>
+        <p class="b2">paragraph 2</p>
+        <p class="b0 b2 b3">paragraph 3</p>
     </div>
+
+## Known limitations
+
+* When converting from CSS to inline styles, selectors using :hover/:visited/etc. will not be saved
 
 ## Todo
 
-* Group properties in pairs and triples
-* Detect superfluous properties by keeping track of inheritance.
+* Group properties in two, three, or more, per class (optimize for size)
+* Detect superfluous properties by keeping track of inheritance
 * Turn into a Bundle (Symfony2 style)
 * Hook into the Symfony2 templating system somehow (or maybe just Twig?)
 * Convert HTML/CSS to HTML with inline styles
